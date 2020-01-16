@@ -1,0 +1,59 @@
+# 二叉树的层序遍历
+
+标签（空格分隔）： 算法 二叉树 BFS
+
+---
+
+二叉树的层序遍历实际上是二叉树当中的广度优先搜索，所以也是需要使用队列来对节点进行存储。
+
+## 算法思想：
+
+ - 初始化对列，将头指针front和尾指针rear均指向-1，这样设置的话在添加元素之后，front永远指向队首的前一个位置，rear永远指向队尾。
+ - 由于许多题目要求每一层的元素要互相分开处理，所以需要一个额外的指针last标记本层的最后一个节点，如果front与last指向同一个位置，那么本层的节点已经全部弹出，接下来的操作是针对下一层的。
+ - 使用temp存储每一层的节点，每层访问结束后，清空队列。
+ 
+## 具体算法实现(c++):
+```cpp
+vector<vector<int>> levelOrder(TreeNode* root) {
+    //处理特殊情况
+    vector<vector<int>> result;
+    if(root==NULL) return result;
+    //初始化对列
+    queue<TreeNode*> q;
+    int rear=-1,front=-1;
+    int last=0;
+    
+    q.push(root);rear++;
+    vector<int> temp;
+    //每一轮循环 遍历本层节点 压入下一层节点 依次弹出本层节点
+    while(!q.empty()){
+        //取队首元素 压入子节点 弹出队首元素
+        temp.push_back(q.front()->val);
+        if(q.front()->left)  {
+            q.push(q.front()->left);
+            rear++;
+        }
+        if(q.front()->right) {
+            q.push(q.front()->right);
+            rear++;
+        }
+        q.pop();front++;
+        
+        //如果front与last指向同一位置，则本层已经遍历结束
+        //清空temp，将last指向下一层的结尾，开始下一轮循环
+        if(front==last){
+            result.push_back(temp);
+            temp.clear();
+            last=rear;
+        }
+    }
+    return result;
+}
+```
+
+## 相关题目
+
+ 1. 二叉树的层序遍历 https://leetcode-cn.com/problems/binary-tree-level-order-traversal/
+ 2. 二叉树的层次遍历2 https://leetcode-cn.com/problems/binary-tree-level-order-traversal-ii/
+ 3. 二叉树的层平均值 https://leetcode-cn.com/problems/average-of-levels-in-binary-tree/
+ 4. N叉树的层序遍历 https://leetcode-cn.com/problems/n-ary-tree-level-order-traversal/
